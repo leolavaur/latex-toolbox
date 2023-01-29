@@ -1,6 +1,6 @@
 {
   "nodes": {
-    "ed": {
+    "editio": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
@@ -8,11 +8,11 @@
         "utils": "utils"
       },
       "locked": {
-        "lastModified": 1674942513,
-        "narHash": "sha256-I6n4iK7159n6GeKqKAPtNyKVySgQt2931A/kiRTt7PQ=",
+        "lastModified": 1675107922,
+        "narHash": "sha256-3dHCR+kPEoeybn+vh9CtKedRr3tQcsENPCufeynYgNs=",
         "owner": "phdcybersec",
         "repo": "editio",
-        "rev": "7db6b6e1767dd238534b412986b556a444b22109",
+        "rev": "f6df924a8c01646be1599b61506c5fd5909bc449",
         "type": "github"
       },
       "original": {
@@ -39,7 +39,7 @@
     },
     "root": {
       "inputs": {
-        "ed": "ed",
+        "editio": "editio",
         "nixpkgs": "nixpkgs",
         "utils": "utils_2"
       }

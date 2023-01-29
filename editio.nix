@@ -1,14 +1,14 @@
-{ pkgs }: rec {
+{ pkgs }: with pkgs; rec {
   
-  latexDeps = with pkgs; (texlive.combine {
-    inherit (texlive) 
-      scheme-small
-      amsfonts # amssymb 
-      amsmath
+  _latexDependencies = texlive.combine {
+    inherit (texlive) scheme-small
+      latexmk
+      latexdiff
       biber
+      amsfonts        # amssymb
+      amsmath
       biblatex
-      biblatex-ieee
-      bigfoot # suffix
+      bigfoot         # suffix
       booktabs
       catchfile
       cleveref
@@ -23,26 +23,72 @@
       glossaries
       hyperref
       iftex
-      latexdiff
-      latexmk
       listingsutf8
       makecell
       mfirstuc
       minted
       mkjobtexmf
-      preprint # balance
-      psnfss # helvet
+      preprint      # balance
+      psnfss        # helvet
       tcolorbox
       xcolor
       xfor
       xstring
-    ;
-  });
+      ;
+  };
 
-  requiredPackages = with pkgs; [
-    latexDeps
+  _shellDependencies =  [
     coreutils
-    which python310Packages.pygments
+    # minted
+    which
+    python310Packages.pygments
   ];
+
+  editio_run = stdenvNoCC.mkDerivation {
+    pname = "latex-editio";
+    version = "v0.2.0";
+    passthru.tlType = "run";
+
+    srcs = [
+      ./editio.sty
+    ];
+
+    unpackPhase = ''
+      runHook preUnpack
+
+      for _src in $srcs; do
+        cp "$_src" $(stripHash "$_src")
+      done
+
+      runHook postUnpack
+    '';
+
+    nativeBuildInputs = [ _latexDependencies ] ++ _shellDependencies ;
+
+    dontConfigure = true;
+
+    installPhase = ''
+      runHook preInstall
+
+      path="$out/tex/latex/editio"
+      mkdir -p "$path"
+      cp *.{cls,def,clo,sty} "$path/"
+
+      runHook postInstall
+    '';
+
+    meta = with lib; {
+      description = "LaTeX editing tools, templates, and workflows using Nix.";
+      license = licenses.mit;
+      maintainers = with maintainers; [ phdcybersec ];
+      platforms = platforms.all;
+    };
+  };
+
+  editio_texlive = { pkgs = [ editio_run ]; };
+
+  editio_pkg = texlive.combine {
+    editio = { pkgs = [ editio_run ]; };
+  };
 
 }

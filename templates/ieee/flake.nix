@@ -15,11 +15,7 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        requiredPackages = editio.helpers.${system}.requiredPackages ++ [
-          (pkgs.texlive.combine {
-            inherit (pkgs.texlive) ieeetran;
-          })
-        ];
+        ed = editio.helpers.${system};
       in rec {
         
         packages = rec {
@@ -27,7 +23,7 @@
             name = "document";
             src = ./src;
 
-            buildInputs = requiredPackages;
+            buildInputs = [ ed.editio_pkg ];
 
             buildPhase = ''
               mkdir -p .cache/texmf-var
@@ -45,7 +41,7 @@
         };
 
         devShell = pkgs.mkShell {
-          buildInputs = requiredPackages ++ [ pkgs.tectonic ];
+          buildInputs = [ ed.editio_pkg pkgs.tectonic ];
         };
 
       }

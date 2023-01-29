@@ -7,35 +7,37 @@
   };
 
   outputs = { self, nixpkgs, utils }: 
-    
-    (utils.lib.eachDefaultSystem (system:
-      let
-          pkgs = import nixpkgs { inherit system; };
-      in
+
     {
       
       templates = {
         
         base = {
-          path = ./base;
+          path = ./templates/base;
           description = "Base template for LaTeX documents.";
         };
 
         ieee = {
-          path = ./ieee;
+          path = ./templates/ieee;
           description = "Base template with IEEEtran.";
         };
 
         vanilla = {
-          path = ./vanilla;
+          path = ./templates/vanilla;
           description = "Base template with vanilla LaTeX.";
         };
 
+        default = self.templates.base;
+
       };
 
-      defaultTemplate = self.templates.base;
+    } // utils.lib.eachDefaultSystem (system:
+      let
+          pkgs = import nixpkgs { inherit system; };
+      in
+    {
 
       helpers = import ./editio.nix { inherit pkgs; };
     
-    }));
+    });
 }
