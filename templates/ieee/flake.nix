@@ -16,6 +16,7 @@
       let
         pkgs = import nixpkgs { inherit system; };
         ed = editio.helpers.${system};
+        deps = [ ed._latexDependencies ] ++ ed._shellDependencies;
       in rec {
         
         packages = rec {
@@ -23,13 +24,14 @@
             name = "document";
             src = ./src;
 
-            buildInputs = [ ed.editio_pkg ];
+            buildInputs = deps;
 
             buildPhase = ''
               mkdir -p .cache/texmf-var
               env TEXMFHOME=.cache TEXMFVAR=.cache/texmf-var \
-              latexmk -interaction=nonstopmode -shell-escape -pdf \
-              document.tex
+                SOURCE_DATE_EPOCH=${toString self.lastModified} \
+                latexmk -interaction=nonstopmode -shell-escape -pdf \
+                document.tex
             '';
 
             installPhase = ''
@@ -41,7 +43,7 @@
         };
 
         devShell = pkgs.mkShell {
-          buildInputs = [ ed.editio_pkg pkgs.tectonic ];
+          buildInputs = deps ++ [ pkgs.tectonic ];
         };
 
       }

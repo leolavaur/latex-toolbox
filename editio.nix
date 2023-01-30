@@ -12,6 +12,7 @@
       booktabs
       catchfile
       cleveref
+      pdfcol
       datatool
       enumitem
       environ
@@ -34,7 +35,16 @@
       xcolor
       xfor
       xstring
+      microtype
+      inconsolata
+      
+      # for ieee only
+      ieeetran
+      biblatex-ieee
       ;
+
+      # editio
+      inherit editio_texlive;
   };
 
   _shellDependencies =  [
@@ -63,7 +73,7 @@
       runHook postUnpack
     '';
 
-    nativeBuildInputs = [ _latexDependencies ] ++ _shellDependencies ;
+    nativeBuildInputs = [ texlive.combined.scheme-small ] ;
 
     dontConfigure = true;
 
@@ -88,7 +98,7 @@
   editio_texlive = { pkgs = [ editio_run ]; };
 
   editio_pkg = texlive.combine {
-    editio = { pkgs = [ editio_run ]; };
+    inherit editio_texlive;
   };
 
 }
