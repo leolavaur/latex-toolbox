@@ -54,10 +54,48 @@
     python310Packages.pygments
   ];
 
-  editio_run = stdenvNoCC.mkDerivation {
+  pkg = stdenvNoCC.mkDerivation (finalAttrs: {
     pname = "latex-editio";
     version = "v0.2.0";
-    passthru.tlType = "run";
+    
+    tlType = "run";
+    passthru.pkgs = with texlive; 
+      lib.lists.foldr (a: b: a.pkgs ++ b) [pkg] [
+        latexmk
+        biber
+        amsfonts        # amssymb
+        amsmath
+        biblatex
+        bigfoot         # suffix
+        booktabs
+        catchfile
+        cleveref
+        pdfcol
+        datatool
+        enumitem
+        environ
+        etoolbox
+        float
+        fontspec
+        framed
+        fvextra
+        glossaries
+        hyperref
+        iftex
+        listingsutf8
+        makecell
+        mfirstuc
+        minted
+        mkjobtexmf
+        preprint      # balance
+        psnfss        # helvet
+        tcolorbox
+        xcolor
+        xfor
+        xstring
+        microtype
+        inconsolata
+      ];
 
     srcs = [
       ./editio.sty
@@ -93,9 +131,9 @@
       maintainers = with maintainers; [ phdcybersec ];
       platforms = platforms.all;
     };
-  };
+  });
 
-  editio_texlive = { pkgs = [ editio_run ]; };
+  editio_texlive = { pkgs = [ pkg ]; };
 
   editio_pkg = texlive.combine {
     inherit editio_texlive;
