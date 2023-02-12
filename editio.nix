@@ -1,14 +1,18 @@
-{ pkgs }: with pkgs; rec {
-  
-  _latexDependencies = texlive.combine {
-    inherit (texlive) scheme-small
+{ pkgs }: rec {
+
+  dependencies = {
+    
+    tools = with pkgs.texlive; [
       latexmk
       latexdiff
       biber
-      amsfonts        # amssymb
+    ];
+
+    packages = with pkgs.texlive; [
+      amsfonts       # amssymb
       amsmath
       biblatex
-      bigfoot         # suffix
+      bigfoot        # suffix
       booktabs
       catchfile
       cleveref
@@ -29,38 +33,32 @@
       mfirstuc
       minted
       mkjobtexmf
-      preprint      # balance
-      psnfss        # helvet
+      preprint       # balance
+      psnfss         # helvet
       tcolorbox
       xcolor
       xfor
       xstring
       microtype
       inconsolata
-      
-      # for ieee only
-      ieeetran
-      biblatex-ieee
-      ;
+    ];
 
-      # editio
-      inherit editio_texlive;
+    shell = with pkgs; [
+      coreutils
+      # minted
+      which
+      python310Packages.pygments
+    ];
+
   };
 
-  _shellDependencies =  [
-    coreutils
-    # minted
-    which
-    python310Packages.pygments
-  ];
-
-  pkg = stdenvNoCC.mkDerivation (finalAttrs: {
+  pkg = pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
     pname = "latex-editio";
-    version = "v0.2.0";
+    version = "v0.3.0";
     
     tlType = "run";
-    passthru.pkgs = with texlive; 
-      lib.lists.foldr (a: b: a.pkgs ++ b) [pkg] [
+    passthru.pkgs = with pkgs.texlive; 
+      pkgs.lib.lists.foldr (a: b: a.pkgs ++ b) [pkg] [
         latexmk
         biber
         amsfonts        # amssymb
@@ -111,7 +109,7 @@
       runHook postUnpack
     '';
 
-    nativeBuildInputs = [ texlive.combined.scheme-small ] ;
+    nativeBuildInputs = [ pkgs.texlive.combined.scheme-small ] ;
 
     dontConfigure = true;
 
@@ -125,7 +123,7 @@
       runHook postInstall
     '';
 
-    meta = with lib; {
+    meta = with pkgs.lib; {
       description = "LaTeX editing tools, templates, and workflows using Nix.";
       license = licenses.mit;
       maintainers = with maintainers; [ phdcybersec ];
@@ -133,10 +131,88 @@
     };
   });
 
-  editio_texlive = { pkgs = [ pkg ]; };
 
-  editio_pkg = texlive.combine {
-    inherit editio_texlive;
-  };
+  mkPkg = {
+    minted ? false,
+    bibbliography ? false,
+  }: pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
+
+    pname = "latex-editio";
+    version = "v0.2.0";
+    
+    tlType = "run";
+    passthru.pkgs = with pkgs.texlive; 
+      pkgs.lib.lists.foldr (a: b: a.pkgs ++ b) [ (mkPkg {}) ] [
+        latexmk
+        biber
+        amsfonts        # amssymb
+        amsmath
+        biblatex
+        bigfoot         # suffix
+        booktabs
+        catchfile
+        cleveref
+        pdfcol
+        datatool
+        enumitem
+        environ
+        etoolbox
+        float
+        fontspec
+        framed
+        fvextra
+        glossaries
+        hyperref
+        iftex
+        listingsutf8
+        makecell
+        mfirstuc
+        minted
+        mkjobtexmf
+        preprint      # balance
+        psnfss        # helvet
+        tcolorbox
+        xcolor
+        xfor
+        xstring
+        microtype
+        inconsolata
+      ];
+
+    srcs = [
+      ./editio.sty
+    ];
+
+    unpackPhase = ''
+      runHook preUnpack
+
+      for _src in $srcs; do
+        cp "$_src" $(stripHash "$_src")
+      done
+
+      runHook postUnpack
+    '';
+
+    nativeBuildInputs = [ pkgs.texlive.combined.scheme-small ] ;
+
+    dontConfigure = true;
+
+    installPhase = ''
+      runHook preInstall
+
+      path="$out/tex/latex/editio"
+      mkdir -p "$path"
+      cp *.{cls,def,clo,sty} "$path/"
+
+      runHook postInstall
+    '';
+
+    meta = with pkgs.lib; {
+      description = "LaTeX editing tools, templates, and workflows using Nix.";
+      license = licenses.mit;
+      maintainers = with maintainers; [ phdcybersec ];
+      platforms = platforms.all;
+    };
+  });
 
 }

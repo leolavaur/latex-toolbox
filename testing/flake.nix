@@ -5,7 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     utils.url = "github:numtide/flake-utils";
     editio = {
-      url = "github:phdcybersec/editio";
+      url = "..";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -15,10 +15,14 @@
     utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        deps = with pkgs; [ (texlive.combine {
-          inherit (texlive) scheme-small;
-          inherit (editio.pkg);
-        }) ];
+        deps = with pkgs; [
+          (texlive.combine {
+            inherit (texlive) scheme-small;
+            inherit (editio.helpers.${system}.mkPkg {});
+          })
+          which python310Packages.pygments
+          coreutils 
+        ];
       in rec {
         
         packages = rec {
