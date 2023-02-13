@@ -6,38 +6,29 @@
     utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, utils }: 
-
-    {
+  outputs = { self, nixpkgs, utils, ... }: {
+    
+    templates = {
       
-      templates = {
-        
-        base = {
-          path = ./templates/base;
-          description = "Base template for LaTeX documents.";
-        };
-
-        ieee = {
-          path = ./templates/ieee;
-          description = "Base template with IEEEtran.";
-        };
-
-        vanilla = {
-          path = ./templates/vanilla;
-          description = "Base template with vanilla LaTeX.";
-        };
-
-        default = self.templates.base;
-
+      base = {
+        path = ./templates/base;
+        description = "Base template for LaTeX documents.";
       };
 
-    } // utils.lib.eachDefaultSystem (system:
-      let
-          pkgs = import nixpkgs { inherit system; };
-      in
-    {
+      ieee = {
+        path = ./templates/ieee;
+        description = "Base template with IEEEtran.";
+      };
 
-      helpers = import ./editio.nix { inherit pkgs; };
-    
-    });
+      vanilla = {
+        path = ./templates/vanilla;
+        description = "Base template with vanilla LaTeX.";
+      };
+
+      default = self.templates.base;
+
+    };
+
+  };
+
 }

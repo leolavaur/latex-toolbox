@@ -58,11 +58,13 @@
 \newtoggle{providegls} \togglefalse{providegls}
 \newtoggle{providebib} \togglefalse{providebib}
 \newtoggle{managefonts} \togglefalse{managefonts}
+\newtoggle{useminted} \togglefalse{useminted}
 
 % options
 \DeclareOption{glossary}{\toggletrue{providegls}}
 \DeclareOption{bibliography}{\toggletrue{providebib}}
 \DeclareOption{fonts}{\toggletrue{managefonts}}
+\DeclareOption{minted}{\toggletrue{useminted}}
 
 % discard unknown options
 \DeclareOption*{\OptionNotUsed}
@@ -110,10 +112,144 @@
 % balancing columns
 \RequirePackage{balance}
 % code blocks
-\RequirePackage[newfloat]{minted}
+% \RequirePackage[newfloat]{minted}
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%               CONDITIONAL DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Glossaries
+% ------------------------------------------------------------------------------
+%
+% Requires:
+% - glossary (option)
+% - glossaries (package)
+% - resource
+%
+% Provides:
+% - access to glossaries and acronyms
+
+\iftoggle{providegls}{%
+
+  \PackageWarningNoLine{editio.sty}{Glossaries are currently provided by `editio.sty'}
+
+  \RequirePackage[acronym]{glossaries}
+
+  \glsdisablehyper % disable the hyperlinks
+  %\makenoidxglossaries
+  \input{glossary}
+
+  \newcommand{\editioresetgls}{\glsresetall}
+
+}{%
+  \PackageWarningNoLine{editio.sty}{Glossaries are available in `editio.sty', but not used}
+
+  \newcommand{\editioresetgls}{} % empty command to keep compatibility with main document
+}
+
+% Minted
+% ------------------------------------------------------------------------------
+%
+% Requires:
+% - minted (package)
+%
+% Provides:
+% - all minted commands
+
+\iftoggle{useminted}{%
+
+  \PackageWarningNoLine{editio.sty}{Minted is currently provided by `editio.sty'}
+
+  \RequirePackage[newfloat]{minted}
+
+}{%
+  \PackageWarningNoLine{editio.sty}{Minted is available in `editio.sty', but not used}
+}
+
+
+% Bibliography
+% ------------------------------------------------------------------------------
+%
+% Requires:
+% - bibliography (option)
+% - biblatex (package)
+% - biber (external program)
+%
+% Provides:
+% - access to bibliography
+
+\iftoggle{providebib}{%
+
+  \PackageWarningNoLine{editio.sty}{Bibliography is currently provided by `editio.sty'}
+
+  \RequirePackage[
+    backend=biber,
+    style=ieee,
+    natbib,
+    mincitenames=1,
+    maxcitenames=1,
+    uniquelist
+  ]{biblatex}
+
+  \addbibresource{bibliography.bib}
+  
+  \renewcommand*{\bibfont}{\small}
+  \AtEveryBibitem{%
+    \clearfield{url}%
+    \clearfield{doi}%
+    \clearfield{issn}%
+    \clearfield{isbn}%
+    \clearfield{pages}%
+    \clearfield{month}%
+    \clearfield{volume}%
+    \clearfield{number}%
+  }
+
+  \newcommand{\editioprintbib}{\printbibliography}
+
+}{%
+  \PackageWarningNoLine{editio.sty}{Bibliography is available in `editio.sty', but not used}
+
+  \newcommand{\editioprintbib}{}
+
+}
+
+
+% Uniform fonts
+% ------------------------------------------------------------------------------
+%
+% Requires:
+% - fonts (option)
+%
+% Provides:
+% - homogeneous serif fonts
+
+
+\iftoggle{managefonts}{%
+  \PackageInfo{editio.sty}{Fonts are currently managed by `editio.sty`}
+
+  \RequirePackage{iftex}
+
+  \ifxetex
+    \RequirePackage{fontspec} % XelaTeX on
+    % Install Tex Gyre fonts with Home-Manager / NixOS; or manually and set the path for it to work
+    \setmainfont{texgyretermes}[
+      Extension = .otf,
+      UprightFont = *-regular,
+      BoldFont = *-bold,
+      ItalicFont = *-italic,
+      BoldItalicFont = *-bolditalic,
+      ]
+  \else
+    \RequirePackage[T1]{fontenc}
+    \RequirePackage[utf8]{inputenc}
+    \RequirePackage{helvet}             % Police Helvetica
+  \fi
+}{%
+  \PackageInfo{editio.sty}{Font management is available in `editio.sty`, but not used.}
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               FEATURES AND DEFINITIONS
@@ -340,121 +476,6 @@
 \newcommand{\needref}{\textbf{[?]}\xspace}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%               CONDITIONAL DEFINITIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Glossaries
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - glossary (option)
-% - glossaries (package)
-% - resource
-%
-% Provides:
-% - access to glossaries and acronyms
-
-\iftoggle{providegls}{%
-
-  \PackageWarningNoLine{editio.sty}{Glossaries are currently provided by `editio.sty'}
-
-  \RequirePackage[acronym]{glossaries}
-
-  \glsdisablehyper % disable the hyperlinks
-  %\makenoidxglossaries
-  \input{glossary}
-
-  \newcommand{\editioresetgls}{\glsresetall}
-
-}{%
-  \PackageWarningNoLine{editio.sty}{Glossaries are available in `editio.sty', but not used}
-
-  \newcommand{\editioresetgls}{} % empty command to keep compatibility with main document
-}
-
-
-% Bibliography
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - bibliography (option)
-% - biblatex (package)
-% - biber (external program)
-%
-% Provides:
-% - access to bibliography
-
-\iftoggle{providebib}{%
-
-  \PackageWarningNoLine{editio.sty}{Bibliography is currently provided by `editio.sty'}
-
-  \RequirePackage[
-    backend=biber,
-    style=ieee,
-    natbib,
-    mincitenames=1,
-    maxcitenames=1,
-    uniquelist
-  ]{biblatex}
-
-  \addbibresource{bibliography.bib}
-  
-  \renewcommand*{\bibfont}{\small}
-  \AtEveryBibitem{%
-    \clearfield{url}%
-    \clearfield{doi}%
-    \clearfield{issn}%
-    \clearfield{isbn}%
-    \clearfield{pages}%
-    \clearfield{month}%
-    \clearfield{volume}%
-    \clearfield{number}%
-  }
-
-  \newcommand{\editioprintbib}{\printbibliography}
-
-}{%
-  \PackageWarningNoLine{editio.sty}{Bibliography is available in `editio.sty', but not used}
-
-  \newcommand{\editioprintbib}{}
-
-}
-
-
-% Uniform fonts
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - fonts (option)
-%
-% Provides:
-% - homogeneous serif fonts
-
-
-\iftoggle{managefonts}{%
-  \PackageInfo{editio.sty}{Fonts are currently managed by `editio.sty`}
-
-  \RequirePackage{iftex}
-
-  \ifxetex
-    \RequirePackage{fontspec} % XelaTeX on
-    % Install Tex Gyre fonts with Home-Manager / NixOS; or manually and set the path for it to work
-    \setmainfont{texgyretermes}[
-      Extension = .otf,
-      UprightFont = *-regular,
-      BoldFont = *-bold,
-      ItalicFont = *-italic,
-      BoldItalicFont = *-bolditalic,
-      ]
-  \else
-    \RequirePackage[T1]{fontenc}
-    \RequirePackage[utf8]{inputenc}
-    \RequirePackage{helvet}             % Police Helvetica
-  \fi
-}{%
-  \PackageInfo{editio.sty}{Font management is available in `editio.sty`, but not used.}
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               END OF `editio.sty'

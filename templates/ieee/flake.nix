@@ -5,33 +5,47 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     utils.url = "github:numtide/flake-utils";
     editio = {
-      url = "github:phdcybersec/editio";
+      url = "..";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, utils, editio }:
+  outputs = { self, nixpkgs, utils, editio } @ inputs:
 
     utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
-        ed = editio.helpers.${system};
-        deps = [ ed._latexDependencies ] ++ ed._shellDependencies;
+        pkgs = import inputs.nixpkgs { inherit system; };
+        editio = import inputs.editio { inherit pkgs; };
       in rec {
         
         packages = rec {
-          document = pkgs.stdenvNoCC.mkDerivation rec {
+          document = pkgs.stdenvNoCC.mkDerivation {
             name = "document";
             src = ./src;
 
-            buildInputs = deps;
+            buildInputs = 
+              with pkgs; [
+
+                (texlive.combine {
+                  inherit (texlive) scheme-small
+                    IEEEtran
+                    biblatex-ieee
+                  ;
+                  # sty and its dependencies
+                  inherit editio;
+
+                })
+                
+                # other shell dependencies
+                editio.deps.env
+
+              ];
 
             buildPhase = ''
               mkdir -p .cache/texmf-var
               env TEXMFHOME=.cache TEXMFVAR=.cache/texmf-var \
-                SOURCE_DATE_EPOCH=${toString self.lastModified} \
-                latexmk -interaction=nonstopmode -shell-escape -pdf \
-                document.tex
+              latexmk -interaction=nonstopmode -shell-escape -pdf \
+              document.tex
             '';
 
             installPhase = ''
@@ -39,11 +53,15 @@
               install -m 644 document.pdf $out/
             '';
           };
+
           default = document;
         };
 
-        devShell = pkgs.mkShell {
-          buildInputs = deps ++ [ pkgs.tectonic ];
+        devShells = {
+          default = pkgs.mkShell {
+            buildInputs = packages.document.buildInputs 
+              ++ [ pkgs.tectonic pkgs.coreutils ];
+          };
         };
 
       }

@@ -10,27 +10,32 @@
     };
   };
 
-  outputs = { self, nixpkgs, utils, editio }:
+  outputs = { self, nixpkgs, utils, editio } @ inputs:
 
     utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; };
-        deps = with pkgs; [
-          (texlive.combine {
-            inherit (texlive) scheme-small;
-            inherit (editio.helpers.${system}.mkPkg {});
-          })
-          which python310Packages.pygments
-          coreutils 
-        ];
+        pkgs = import inputs.nixpkgs { inherit system; };
+        editio = import inputs.editio { inherit pkgs; };
       in rec {
         
         packages = rec {
-          document = pkgs.stdenvNoCC.mkDerivation rec {
+          document = pkgs.stdenvNoCC.mkDerivation {
             name = "document";
             src = ./src;
 
-            buildInputs = deps;
+            buildInputs = 
+              with pkgs; [
+
+                (texlive.combine {
+                  inherit (texlive) scheme-small;
+                  # sty and its dependencies
+                  inherit editio;
+                })
+                
+                # other shell dependencies
+                editio.deps.env
+
+              ];
 
             buildPhase = ''
               mkdir -p .cache/texmf-var
@@ -44,11 +49,15 @@
               install -m 644 document.pdf $out/
             '';
           };
+
           default = document;
         };
 
-        devShell = pkgs.mkShell {
-          buildInputs = deps ++ [ pkgs.tectonic ];
+        devShells = {
+          default = pkgs.mkShell {
+            buildInputs = packages.document.buildInputs 
+              ++ [ pkgs.tectonic pkgs.coreutils ];
+          };
         };
 
       }
