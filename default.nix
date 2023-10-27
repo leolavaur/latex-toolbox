@@ -18,7 +18,7 @@ rec {
     ;
 
   srcs = [
-    ./editio.sty
+    ./textb.sty
   ];
 
   unpackPhase = ''

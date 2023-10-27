@@ -1,4 +1,4 @@
-% editio.sty
+% textb.sty
 % 
 % Standard definitions for scientific paper writing in LaTeX. The macros and
 % variables defined here are very opinionated and should be used with care. The
@@ -30,9 +30,10 @@
 %% 
 
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{editio}
-%  [2022/04/13 v0.01 LaTeX package for my own purpose]
-   [2023/01/25 v0.2.0 LaTeX package for my own purpose]
+\ProvidesPackage{textb}
+%  [2022/04/13 v0.1.0 LaTeX package for my own purpose]
+%  [2023/01/25 v0.2.0 LaTeX package for my own purpose]
+  [2023/10/27 v0.3.0 LaTeX package for my own purpose]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               OPTIONS
@@ -49,7 +50,7 @@
 % \iftoggle{providegls}{%
 %   \RequirePackage{glossaries}
 % }{%
-%   \PackageInfo{editio.sty}{Glossaries are available, but not used.}
+%   \PackageInfo{textb.sty}{Glossaries are available, but not used.}
 % }
 % ```
 
@@ -133,7 +134,7 @@
 
 \iftoggle{providegls}{%
 
-  \PackageWarningNoLine{editio.sty}{Glossaries are currently provided by `editio.sty'}
+  \PackageWarningNoLine{textb.sty}{Glossaries are currently provided by `textb.sty'}
 
   \RequirePackage[acronym]{glossaries}
 
@@ -141,12 +142,12 @@
   %\makenoidxglossaries
   %\input{glossary}
 
-  \newcommand{\editioresetgls}{\glsresetall}
+  \newcommand{\textbresetgls}{\glsresetall}
 
 }{%
-  \PackageWarningNoLine{editio.sty}{Glossaries are available in `editio.sty', but not used}
+  \PackageWarningNoLine{textb.sty}{Glossaries are available in `textb.sty', but not used}
 
-  \newcommand{\editioresetgls}{} % empty command to keep compatibility with main document
+  \newcommand{\textbresetgls}{} % empty command to keep compatibility with main document
 }
 
 % Minted
@@ -160,12 +161,12 @@
 
 \iftoggle{useminted}{%
 
-  \PackageWarningNoLine{editio.sty}{Minted is currently provided by `editio.sty'}
+  \PackageWarningNoLine{textb.sty}{Minted is currently provided by `textb.sty'}
 
   \RequirePackage[newfloat]{minted}
 
 }{%
-  \PackageWarningNoLine{editio.sty}{Minted is available in `editio.sty', but not used}
+  \PackageWarningNoLine{textb.sty}{Minted is available in `textb.sty', but not used}
 }
 
 
@@ -182,7 +183,7 @@
 
 \iftoggle{providebib}{%
 
-  \PackageWarningNoLine{editio.sty}{Bibliography is currently provided by `editio.sty'}
+  \PackageWarningNoLine{textb.sty}{Bibliography is currently provided by `textb.sty'}
 
   \RequirePackage[
     backend=biber,
@@ -207,12 +208,12 @@
     \clearfield{number}%
   }
 
-  \newcommand{\editioprintbib}{\printbibliography}
+  \newcommand{\textbprintbib}{\printbibliography}
 
 }{%
-  \PackageWarningNoLine{editio.sty}{Bibliography is available in `editio.sty', but not used}
+  \PackageWarningNoLine{textb.sty}{Bibliography is available in `textb.sty', but not used}
 
-  \newcommand{\editioprintbib}{}
+  \newcommand{\textbprintbib}{}
 
 }
 
@@ -228,7 +229,7 @@
 
 
 \iftoggle{managefonts}{%
-  \PackageInfo{editio.sty}{Fonts are currently managed by `editio.sty`}
+  \PackageInfo{textb.sty}{Fonts are currently managed by `textb.sty`}
 
   \RequirePackage{iftex}
 
@@ -248,7 +249,7 @@
     \RequirePackage{helvet}             % Police Helvetica
   \fi
 }{%
-  \PackageInfo{editio.sty}{Font management is available in `editio.sty`, but not used.}
+  \PackageInfo{textb.sty}{Font management is available in `textb.sty`, but not used.}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -368,20 +369,6 @@
 \WithSuffix\newcommand\fullcref*[1]{\nameref*{#1} (\labelcref*{#1})}
 \WithSuffix\newcommand\fullcref"[1]{\emph{``\nameref*{#1}''} (\labelcref*{#1})}
 
-
-% Code typing
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - 
-%
-% Provides:
-% - \code command
-
-% TODO: remove this; use either minted or lstlisting, or simply \texttt with the 
-%       incosolata font
-\newcommand{\code}[1]{{\small\texttt{#1}}}
-
 % Author alignment
 % ------------------------------------------------------------------------------
 %
@@ -478,7 +465,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%               END OF `editio.sty'
+%               END OF `textb.sty'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
