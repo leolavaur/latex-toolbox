@@ -1,13 +1,18 @@
-{ pkgs
-  , withMinted ? false
-  , withBib ? false,
+{ 
+  # libs and functions
+  stdenvNoCC, lib,
+  # packages
+  texlive, which, python310Packages,
+  # attributes
+  withMinted ? false,
+  withBib ? false,
 }: 
   
-pkgs.stdenvNoCC.mkDerivation (finalAttrs: with pkgs; 
+stdenvNoCC.mkDerivation (finalAttrs:
 
 rec {
   
-  pname = "latex-editio";
+  pname = "textb";
   version = "v0.3.7";
   
   passthru.tlType = "run";
@@ -50,7 +55,7 @@ rec {
 
   passthru.deps = {
 
-    tex = with pkgs.texlive; [
+    tex = with texlive; [
 
       # tools
       biber
@@ -91,10 +96,10 @@ rec {
       xstring
 
     ] 
-      ++ pkgs.lib.lists.optionals withMinted [ minted ]
+      ++ lib.lists.optionals withMinted [ minted ]
     ;
 
-    env = with pkgs; [ ]
+    env = [ ]
       ++ lib.lists.optionals withMinted [ 
         which
         python310Packages.pygments

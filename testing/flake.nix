@@ -1,56 +1,32 @@
 {
-  description = "Base template for LaTeX documents.";
+  description = "Testing flake for LaTeX documents.";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    utils.url = "github:numtide/flake-utils";
-    editio = {
+    flake-utils.url = "github:numtide/flake-utils";
+    latex-toolbox = {
       url = "..";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, utils, editio } @ inputs:
+  outputs = { self, nixpkgs, flake-utils, latex-toolbox } @ inputs:
 
-    utils.lib.eachDefaultSystem (system:
+    flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import inputs.nixpkgs { inherit system; };
-        editio = import inputs.editio { inherit pkgs; };
+        pkgs = import inputs.nixpkgs { 
+          inherit system;
+        };
+        textb = inputs.latex-toolbox.packages.${system}.default;
+        latex = inputs.latex-toolbox.lib.${system}.latex;
       in rec {
         
-        packages = rec {
-          document = pkgs.stdenvNoCC.mkDerivation {
-            name = "document";
-            src = ./src;
+        packages.default = latex.mkDocument { src = ./src; main = "main.tex"; };
 
-            buildInputs = 
-              with pkgs; [
-
-                (texlive.combine {
-                  inherit (texlive) scheme-small;
-                  # sty and its dependencies
-                  inherit editio;
-                })
-                
-                # other shell dependencies
-                editio.deps.env
-
-              ];
-
-            buildPhase = ''
-              mkdir -p .cache/texmf-var
-              env TEXMFHOME=.cache TEXMFVAR=.cache/texmf-var \
-              latexmk -interaction=nonstopmode -shell-escape -pdf \
-              document.tex
-            '';
-
-            installPhase = ''
-              mkdir -p $out
-              install -m 644 document.pdf $out/
-            '';
-          };
-
-          default = document;
+        packages.withtb = latex.mkDocument {
+          src = ./src;
+          main = "main.tex";
+          deps = { inherit textb; };
         };
 
         devShells = {
