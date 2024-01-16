@@ -1,5 +1,5 @@
 {
-  description = "Template for IEEE articles.";
+  description = "Template for LaTeX document with custom package.";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -18,6 +18,9 @@
           inherit system;
         };
         latex = inputs.latex-toolbox.lib.${system}.latex;
+
+        textb = inputs.latex-toolbox.packages.${system}.textb;
+        
       in rec {
         
         packages = rec {
@@ -30,7 +33,9 @@
                 biblatex-ieee
                 biblatex
                 biber
+                courier
               ;
+              inherit textb;
             };
           };
           default = document;

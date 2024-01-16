@@ -8,7 +8,8 @@
 %               PACKAGES AND OPTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+\usepackage[style=ieee,natbib]{biblatex}
+\addbibresource{bibliography.bib}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               DOCUMENT
@@ -48,6 +49,8 @@ list, of, keywords
 \section{Introduction}
 \label{sec:intro}
 
+This paper cites \citet{johndoe}.
+
 \section{Related work}
 \label{sec:related}
 
@@ -60,6 +63,7 @@ list, of, keywords
 \section{Conclusion}
 \label{sec:conclusion}
 
+\printbibliography
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               DOCUMENT END

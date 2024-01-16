@@ -3,6 +3,7 @@
 ## Nix
 
 **/result
+templates/**/flake.lock
 
 
 

@@ -217,41 +217,6 @@
 
 }
 
-
-% Uniform fonts
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - fonts (option)
-%
-% Provides:
-% - homogeneous serif fonts
-
-
-\iftoggle{managefonts}{%
-  \PackageInfo{textb.sty}{Fonts are currently managed by `textb.sty`}
-
-  \RequirePackage{iftex}
-
-  \ifxetex
-    \RequirePackage{fontspec} % XelaTeX on
-    % Install Tex Gyre fonts with Home-Manager / NixOS; or manually and set the path for it to work
-    \setmainfont{texgyretermes}[
-      Extension = .otf,
-      UprightFont = *-regular,
-      BoldFont = *-bold,
-      ItalicFont = *-italic,
-      BoldItalicFont = *-bolditalic,
-      ]
-  \else
-    \RequirePackage[T1]{fontenc}
-    \RequirePackage[utf8]{inputenc}
-    \RequirePackage{helvet}             % Police Helvetica
-  \fi
-}{%
-  \PackageInfo{textb.sty}{Font management is available in `textb.sty`, but not used.}
-}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               FEATURES AND DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

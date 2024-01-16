@@ -2,13 +2,16 @@
 % 
 % Basic two-columns docuemnt template.
 
-\documentclass[a4paper,twocolumn]{article}
+\documentclass[conference]{IEEEtran}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               PACKAGES AND OPTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \usepackage[]{textb}
+\usepackage[style=ieee,natbib]{biblatex}
+\addbibresource{bibliography.bib}
+
+\usepackage{textb}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               DOCUMENT
@@ -23,7 +26,14 @@
 
 \title{Catchy title for a catchy paper}
 
-\author{John Doe}
+
+\author{
+    \IEEEauthorblockN{John Doe}
+    \IEEEauthorblockA{Department of Computer Science\\
+    University of Somewhere\\
+    Somewhere, Country\\
+    Email: \{firstname.lastname\}@somewhere.com}
+}
 
 \maketitle
 
@@ -31,6 +41,9 @@
     Abstract goes here. 
 \end{abstract}
 
+\begin{IEEEkeywords}
+list, of, keywords
+\end{IEEEkeywords}
 
 % Sections
 % ------------------------------------------------------------------------------
@@ -38,12 +51,24 @@
 \section{Introduction}
 \label{sec:intro}
 
-\section{Content}
-\label{sec:content}
+This paper cites \citet{johndoe}.
+
+\section{Related work}
+\label{sec:related}
+
+\section{Methodology}
+\label{sec:methodology}
+
+\section{Results}
+\label{sec:results}
+
+\info{This information box is made using \texttt{textb}!}
+
 
 \section{Conclusion}
 \label{sec:conclusion}
 
+\printbibliography
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               DOCUMENT END

@@ -91,6 +91,7 @@ rec {
       preprint        # balance
       psnfss          # helvet
       tcolorbox
+      tikzfill
       xcolor
       xfor
       xstring

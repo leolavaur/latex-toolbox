@@ -12,17 +12,17 @@
       
       base = {
         path = ./templates/base;
-        description = "Base template for LaTeX documents.";
+        description = "Nix flake for LaTeX documents.";
       };
 
       ieee = {
         path = ./templates/ieee;
-        description = "Base template with IEEEtran.";
+        description = "Template for IEEE articles.";
       };
 
-      vanilla = {
-        path = ./templates/vanilla;
-        description = "Base template with vanilla LaTeX.";
+      custom = {
+        path = ./templates/custom;
+        description = "Template for LaTeX document with custom package.";
       };
 
       default = self.templates.base;
@@ -42,7 +42,7 @@
       inherit lib;
 
       packages = {
-        default = pkgs.callPackage ./package.nix { };
+        textb = pkgs.callPackage ./package.nix { };
       };
     }
   ));

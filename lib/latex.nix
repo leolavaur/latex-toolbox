@@ -8,8 +8,8 @@
   #   deps (combinable): list of dependencies that can be combined with the texlive
   #       package set.
   mkDocument = {
+      src,
       name ? "document",
-      src ? ./.,
       main ? "main.tex",
       deps ? {},
     }:
