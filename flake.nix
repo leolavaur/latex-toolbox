@@ -25,6 +25,11 @@
         description = "Template for LaTeX document with custom package.";
       };
 
+      vscode = {
+        path = ./templates/full;
+        description = "Template for LaTeX document with VSCode configuration.";
+      };
+
       default = self.templates.base;
 
     };
