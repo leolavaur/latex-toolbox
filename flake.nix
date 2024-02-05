@@ -47,7 +47,7 @@
       inherit lib;
 
       packages = {
-        textb = pkgs.callPackage ./package.nix { };
+        sty = pkgs.callPackage ./package.nix { };
       };
     }
   ));
