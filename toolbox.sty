@@ -1,4 +1,4 @@
-% textb.sty
+% toolbox.sty
 % 
 % Standard definitions for scientific paper writing in LaTeX. The macros and
 % variables defined here are very opinionated and should be used with care. The
@@ -30,10 +30,11 @@
 %% 
 
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{textb}
+\ProvidesPackage{toolbox}
 %  [2022/04/13 v0.1.0 LaTeX package for my own purpose]
 %  [2023/01/25 v0.2.0 LaTeX package for my own purpose]
-  [2023/10/27 v0.3.0 LaTeX package for my own purpose]
+%  [2023/10/27 v0.3.0 LaTeX package for my own purpose]
+[2024/01/05 v0.4.0 LaTeX package for my own purpose]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               OPTIONS
@@ -56,19 +57,17 @@
 
 % booleans
 \RequirePackage{etoolbox}
-\newtoggle{providegls} \togglefalse{providegls}
-\newtoggle{providebib} \togglefalse{providebib}
-\newtoggle{managefonts} \togglefalse{managefonts}
-\newtoggle{useminted} \togglefalse{useminted}
+\newtoggle{lists} \togglefalse{lists}
+\newtoggle{theorems} \togglefalse{theorems}
+\newtoggle{bibconf} \togglefalse{bibconf}
 
 % options
-\DeclareOption{glossary}{\toggletrue{providegls}}
-\DeclareOption{bibliography}{\toggletrue{providebib}}
-\DeclareOption{fonts}{\toggletrue{managefonts}}
-\DeclareOption{minted}{\toggletrue{useminted}}
+\DeclareOption{lists}{\toggletrue{lists}}
+\DeclareOption{theorems}{\toggletrue{theorems}}
+\DeclareOption{bibconf}{\toggletrue{bibconf}}
 
 % discard unknown options
-\DeclareOption*{\OptionNotUsed}
+% \DeclareOption*{\OptionNotUsed}
 \ProcessOptions\relax
 
 
@@ -89,112 +88,34 @@
 % Avoiding imports of commonly used packages
 % ------------------------------------------------------------------------------
 
-\RequirePackage{amsmath,amssymb,amsfonts} % for math
-\RequirePackage{float}                    % for figures
-\RequirePackage[dvipsnames]{xcolor}       % for color
-\RequirePackage{hyperref}                 % for hyperlinks
-\RequirePackage{booktabs,makecell}        % for tables
-
-
-% Packages for specific use
-% ------------------------------------------------------------------------------
-
-% lists and enumerations
-\RequirePackage[inline,shortlabels]{enumitem}
-% theorems definitions
-\RequirePackage{amsthm}
-% cross-references
-\RequirePackage{cleveref}
-\RequirePackage{suffix}
-% abbreviations
-\RequirePackage{xspace}
-% color boxes
-\RequirePackage[most,breakable]{tcolorbox} 
-% balancing columns
-\RequirePackage{balance}
-% code blocks
-% \RequirePackage[newfloat]{minted}
-
-
+\RequirePackage{amsmath,amssymb,amsfonts,amsthm} % for math
+\RequirePackage{float}                           % for figures
+\RequirePackage[dvipsnames]{xcolor}              % for color
+\RequirePackage{hyperref}                        % for hyperlinks
+\RequirePackage{booktabs,makecell}               % for tables
+\RequirePackage{balance}                         % for balancing columns
+\RequirePackage{cleveref}                        % for cross-references
+\RequirePackage{graphicx}                        % for images
+\RequirePackage{subcaption}                      % for subfigures
+\RequirePackage[inline,shortlabels]{enumitem}    % for lists
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%               CONDITIONAL DEFINITIONS
+%               FEATURES AND DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Glossaries
+% BibLaTeX configuration
 % ------------------------------------------------------------------------------
 %
-% Requires:
-% - glossary (option)
-% - glossaries (package)
-% - resource
-%
-% Provides:
-% - access to glossaries and acronyms
-
-\iftoggle{providegls}{%
-
-  \PackageWarningNoLine{textb.sty}{Glossaries are currently provided by `textb.sty'}
-
-  \RequirePackage[acronym]{glossaries}
-
-  \glsdisablehyper % disable the hyperlinks
-  %\makenoidxglossaries
-  %\input{glossary}
-
-  \newcommand{\textbresetgls}{\glsresetall}
-
-}{%
-  \PackageWarningNoLine{textb.sty}{Glossaries are available in `textb.sty', but not used}
-
-  \newcommand{\textbresetgls}{} % empty command to keep compatibility with main document
-}
-
-% Minted
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - minted (package)
-%
-% Provides:
-% - all minted commands
-
-\iftoggle{useminted}{%
-
-  \PackageWarningNoLine{textb.sty}{Minted is currently provided by `textb.sty'}
-
-  \RequirePackage[newfloat]{minted}
-
-}{%
-  \PackageWarningNoLine{textb.sty}{Minted is available in `textb.sty', but not used}
-}
-
-
-% Bibliography
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - bibliography (option)
-% - biblatex (package)
-% - biber (external program)
-%
-% Provides:
-% - access to bibliography
-
-\iftoggle{providebib}{%
-
-  \PackageWarningNoLine{textb.sty}{Bibliography is currently provided by `textb.sty'}
-
-  \RequirePackage[
+\iftoggle{bibconf}{%
+  \RequirePackage{biblatex}
+  \PassOptionsToPackage{
     backend=biber,
     style=ieee,
     natbib,
     mincitenames=1,
     maxcitenames=1,
     uniquelist
-  ]{biblatex}
-
-  %\addbibresource{bibliography.bib}
+  }{biblatex}
   
   \renewcommand*{\bibfont}{\small}
   \AtEveryBibitem{%
@@ -207,123 +128,83 @@
     \clearfield{volume}%
     \clearfield{number}%
   }
-
-  \newcommand{\textbprintbib}{\printbibliography}
-
-}{%
-  \PackageWarningNoLine{textb.sty}{Bibliography is available in `textb.sty', but not used}
-
-  \newcommand{\textbprintbib}{}
-
 }
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%               FEATURES AND DEFINITIONS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 % Personalized enumerations
 % ------------------------------------------------------------------------------
 %
-% Requires:
-% - enumitem (inline, shortables)
-% - cleveref
-%
-% Provides:
-% - observations
-% - topics
-% - queries
+\iftoggle{lists}{%
+  % Requires:
+  \RequirePackage{cleveref}
+  \RequirePackage{enumitem}
+  \PassOptionsToPackage{inline,shortables}{enumitem}
+  %
+  % Provides:
+  % - observations
+  % - topics
+  % - queries
 
-%% Observation
-\newlist{observations}{enumerate*}{10}
-\setlist[observations]{(a)}
-\crefname{observationsi}{observation}{observations}
-\Crefname{observationsi}{Observation}{Observations}
-%% Topic
-\newlist{topics}{enumerate*}{10}
-\setlist[topics]{(a)}
-\crefname{topicsi}{topic}{topics}
-\Crefname{topicsi}{Topic}{Topics}
-%% Queries
-\newlist{queries}{enumerate}{10}
-\setlist[queries]{(a)}
-\crefname{queriesi}{query}{queries}
-\Crefname{queriesi}{Query}{Queries}
-
+  %% Observation
+  \newlist{observations}{enumerate*}{10}
+  \setlist[observations]{(a)}
+  \crefname{observationsi}{observation}{observations}
+  \Crefname{observationsi}{Observation}{Observations}
+  %% Topic
+  \newlist{topics}{enumerate*}{10}
+  \setlist[topics]{(a)}
+  \crefname{topicsi}{topic}{topics}
+  \Crefname{topicsi}{Topic}{Topics}
+  %% Queries
+  \newlist{queries}{enumerate}{10}
+  \setlist[queries]{(a)}
+  \crefname{queriesi}{query}{queries}
+  \Crefname{queriesi}{Query}{Queries}
+}{}
 
 % Personalized theorems
 % ------------------------------------------------------------------------------
 %
-% Requires:
-% - asmthm
-% - cleveref
-%
-% Provides:
-% - challenges
-% - research questions (RQ)
 
-%% Hypotheses
-\theoremstyle{lemma}
-\newtheorem{hypothesis}{Hypothesis}
-\crefname{hypothesis}{hypothesis}{hypotheses}
-\Crefname{hypothesis}{Hypothesis}{Hypotheses}
+\iftoggle{theorems}{%
+  % Requires:
+  \RequirePackage{cleveref}
+  \RequirePackage{asmthm}
+  %
+  % Provides:
+  % - challenges
+  % - research questions (RQ)
 
-%% Challenges
-\theoremstyle{definition}
-\newtheorem{challenge}{Challenge}
-\crefname{challenge}{challenge}{challenges}
-\Crefname{challenge}{Challenge}{Challenges}
+  %% Hypotheses
+  \theoremstyle{lemma}
+  \newtheorem{hypothesis}{Hypothesis}
+  \crefname{hypothesis}{hypothesis}{hypotheses}
+  \Crefname{hypothesis}{Hypothesis}{Hypotheses}
 
-%% Research Questions
-\newtheorem{innerRQ}{RQ}
-\crefname{innerRQ}{RQ}{RQs}
-\Crefname{innerRQ}{RQ}{RQs}
+  %% Challenges
+  \theoremstyle{definition}
+  \newtheorem{challenge}{Challenge}
+  \crefname{challenge}{challenge}{challenges}
+  \Crefname{challenge}{Challenge}{Challenges}
 
-\newenvironment{RQ}[1]
-  {\renewcommand\theinnerRQ{#1}\innerRQ}
-  {\endinnerRQ}
+  %% Research Questions
+  \newtheorem{innerRQ}{RQ}
+  \crefname{innerRQ}{RQ}{RQs}
+  \Crefname{innerRQ}{RQ}{RQs}
 
-\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
-\let\endchangemargin=\endlist 
+  \newenvironment{RQ}[1]
+    {\renewcommand\theinnerRQ{#1}\innerRQ}
+    {\endinnerRQ}
 
-
-% Highlight boxes
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - tcolorbox (most)
-%
-% Provides:
-% - highlight boxes (warning, info)
-
-%textmarker style from colorbox doc
-\tcbset{textmarker/.style={%
-        enhanced,
-        parbox=false,boxrule=0mm,boxsep=0mm,arc=0mm,
-        outer arc=0mm,left=6mm,right=3mm,top=7pt,bottom=7pt,
-        toptitle=1mm,bottomtitle=1mm}}
-
-\newtcolorbox{warningBox}{textmarker,
-    borderline west={6pt}{0pt}{yellow},
-    colback=yellow!10!white
-}
-\newcommand{\warning}[1]{\begin{warningBox}%
-    \textbf{Warning:} #1 \end{warningBox}}
-
-\newtcolorbox{infoBox}{textmarker,
-    borderline west={6pt}{0pt}{blue},
-    width=\columnwidth,
-    colback=blue!10!white
-}
-\newcommand{\info}[1]{\begin{infoBox} \textbf{Info:} #1 \end{infoBox}}
-
+  \def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+  \let\endchangemargin=\endlist 
+}{}
 
 % Cross-referencing
 % ------------------------------------------------------------------------------
 %
 % Requires:
-% - suffix
-% - hyperref
+\RequirePackage{cleveref}
+\RequirePackage{suffix}
 %
 % Provides:
 % - \fullcref (ref name + label)
@@ -338,13 +219,13 @@
 % ------------------------------------------------------------------------------
 %
 % Requires:
-% - IEEEtran documentclass
+\RequirePackage{ieeetran}
 %
 % Provides:
 % - \linebreakand command
 
 \makeatletter
-\newcommand{\linebreakand}{%
+\newcommand{\IEEElinebreakand}{%
   \end{@IEEEauthorhalign}
   \hfill\mbox{}\par
   \mbox{}\hfill\begin{@IEEEauthorhalign}
@@ -368,7 +249,7 @@
 % ------------------------------------------------------------------------------
 %
 % Requires:
-% - xspace
+\RequirePackage{xspace}
 %
 % Provides:
 % - \eg, \ie, \cf, \wrt, \etal, \vs commands, and capitalized 
@@ -390,31 +271,6 @@
 \def\wrt{w.r.t\onedot} \def\dof{d.o.f\onedot}
 \def\etal{\emph{et al}\onedot}
 \makeatother
-
-% Color boxes
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - tcolorbox (package)
-%
-% Provides:
-% - commentbox environment
-% - \comment command
-
-\newtcolorbox{commentbox}[1][]{%
-  breakable,
-  enhanced,
-  colback=blue!5!white,
-  colframe=blue!75!black,
-  fonttitle=\bfseries,
-  title={\ifblank{#1}{comment:}{@#1:}},
-}
-
-\newtcolorbox{commentboxtitle}[2][]{%
-  colback=blue!5!white,
-  colframe=blue!75!black,
-  title={\ifblank{#1}{comment}{\textbf{comment:} #2}{\textbf{@#1:} #2}},
-}
 
 % Needref 
 % ------------------------------------------------------------------------------
