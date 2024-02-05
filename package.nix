@@ -12,7 +12,7 @@ stdenvNoCC.mkDerivation (finalAttrs:
 
 rec {
   
-  pname = "textb";
+  pname = "toolbox";
   version = "v0.3.7";
   
   passthru.tlType = "run";
@@ -23,7 +23,7 @@ rec {
     ;
 
   srcs = [
-    ./textb.sty
+    ./toolbox.sty
   ];
 
   unpackPhase = ''
