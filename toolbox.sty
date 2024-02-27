@@ -90,14 +90,16 @@
 
 \RequirePackage{amsmath,amssymb,amsfonts,amsthm} % for math
 \RequirePackage{float}                           % for figures
-\RequirePackage[dvipsnames]{xcolor}              % for color
+\RequirePackage{xcolor}              % for color
+\PassOptionsToPackage{dvipsnames}{xcolor}
 \RequirePackage{hyperref}                        % for hyperlinks
 \RequirePackage{booktabs,makecell}               % for tables
 \RequirePackage{balance}                         % for balancing columns
 \RequirePackage{cleveref}                        % for cross-references
 \RequirePackage{graphicx}                        % for images
 \RequirePackage{subcaption}                      % for subfigures
-\RequirePackage[inline,shortlabels]{enumitem}    % for lists
+\RequirePackage{enumitem}    % for lists
+\PassOptionsToPackage{inline,shortlabels}{enumitem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %               FEATURES AND DEFINITIONS
@@ -215,23 +217,6 @@
 \WithSuffix\newcommand\fullcref*[1]{\nameref*{#1} (\labelcref*{#1})}
 \WithSuffix\newcommand\fullcref"[1]{\emph{``\nameref*{#1}''} (\labelcref*{#1})}
 
-% Author alignment
-% ------------------------------------------------------------------------------
-%
-% Requires:
-% - ieeetran class
-%
-% Provides:
-% - \linebreakand command
-
-\makeatletter
-\newcommand{\IEEElinebreakand}{%
-  \end{@IEEEauthorhalign}
-  \hfill\mbox{}\par
-  \mbox{}\hfill\begin{@IEEEauthorhalign}
-}
-\makeatother
-
 % Package test
 % ------------------------------------------------------------------------------
 %
@@ -244,6 +229,26 @@
 \makeatletter
 \newcommand{\IfPackageLoaded}[3]{\ltx@ifpackageloaded{#1}{#2}{#3}}
 \makeatother
+
+% Author alignment
+% ------------------------------------------------------------------------------
+%
+% Requires:
+% - ieeetran class
+%
+% Provides:
+% - \linebreakand command
+
+\IfPackageLoaded{ieeetran}{%
+\makeatletter
+\newcommand{\IEEElinebreakand}{%
+  \end{@IEEEauthorhalign}
+  \hfill\mbox{}\par
+  \mbox{}\hfill\begin{@IEEEauthorhalign}
+}
+\makeatother
+}{}
+
 
 % Abbreviations
 % ------------------------------------------------------------------------------
@@ -280,6 +285,7 @@
 %
 % Provides:
 % - \needref command
+\RequirePackage{xspace}
 
 \newcommand{\needref}{\textbf{[?]}\xspace}
 
